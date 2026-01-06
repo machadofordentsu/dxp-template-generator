@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>PR Template Generator</title>
+	<style>
+		body {
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+			max-width: 900px;
+			margin: 40px auto;
+			padding: 0 16px;
+			background: #f9fafb;
+			color: #111827;
+		}
+
+		h1 {
+			margin-bottom: 24px;
+		}
+
+		fieldset {
+			border: 1px solid #e5e7eb;
+			padding: 16px;
+			margin-bottom: 24px;
+			border-radius: 8px;
+			background: #fff;
+		}
+
+		legend {
+			font-weight: 600;
+			padding: 0 8px;
+		}
+
+		textarea {
+			width: 100%;
+			min-height: 80px;
+			padding: 8px;
+			font-family: monospace;
+			resize: vertical;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 8px;
+		}
+
+		.checkbox-group label {
+			display: flex;
+			gap: 8px;
+			align-items: center;
+			margin-bottom: 6px;
+		}
+
+		button {
+			padding: 10px 16px;
+			font-weight: 600;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		.generate {
+			background: #2563eb;
+			color: white;
+			margin-right: 8px;
+		}
+
+		.copy {
+			background: #10b981;
+			color: white;
+		}
+
+		pre {
+			background: #111827;
+			color: #e5e7eb;
+			padding: 16px;
+			border-radius: 8px;
+			overflow-x: auto;
+			margin-top: 24px;
+			white-space: pre-wrap;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>PR Template Generator</h1>
+
+	<fieldset>
+		<legend>Summary</legend>
+		<textarea id="summary" placeholder="Briefly explain what this PR does and why"></textarea>
+	</fieldset>
+
+	<fieldset>
+		<legend>Changes for</legend>
+		<div class="checkbox-group">
+			<label><input type="checkbox" value="Library" class="changes-for"> Library</label>
+			<label><input type="checkbox" value="DXP Harness (example app)" class="changes-for"> DXP Harness (example
+				app)</label>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Checklist</legend>
+		<div class="checkbox-group">
+			<label><input type="checkbox" value="Test changes on iOS and Android" class="checklist"> Test changes on iOS and
+				Android</label>
+			<label><input type="checkbox" value="Review Ticket's Acceptance Criteria" class="checklist"> Review Ticket's
+				Acceptance Criteria</label>
+			<label><input type="checkbox" value="Test in all brands" class="checklist"> Test in all brands</label>
+			<label><input type="checkbox" value="Generate storybook for new components" class="checklist"> Generate storybook
+				for new components</label>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>Type of Change</legend>
+		<div class="checkbox-group">
+			<label><input type="checkbox" value="Bug fix" class="type"> Bug fix</label>
+			<label><input type="checkbox" value="New feature" class="type"> New feature</label>
+			<label><input type="checkbox" value="Refactor" class="type"> Refactor</label>
+			<label><input type="checkbox" value="Documentation update" class="type"> Documentation update</label>
+			<label><input type="checkbox" value="Tests" class="type"> Tests</label>
+			<label><input type="checkbox" value="Breaking change" class="type"> Breaking change</label>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>How to Test</legend>
+		<textarea id="howToTest" placeholder="1.\n2.\n3."></textarea>
+	</fieldset>
+
+	<fieldset>
+		<legend>Test Coverage</legend>
+		<textarea id="coverage" placeholder="Paste test coverage here"></textarea>
+	</fieldset>
+
+	<fieldset>
+		<legend>Screenshots / Recordings</legend>
+		<textarea id="screenshots" placeholder="Add screenshots or videos"></textarea>
+	</fieldset>
+
+	<fieldset>
+		<legend>Breaking Changes</legend>
+		<textarea id="breaking" placeholder="Describe any breaking changes and migration steps"></textarea>
+	</fieldset>
+
+	<fieldset>
+		<legend>Additional Notes</legend>
+		<textarea id="notes" placeholder="Anything else reviewers should know"></textarea>
+	</fieldset>
+
+	<button class="generate" onclick="generate()">Generate PR Template</button>
+	<button class="copy" onclick="copy()">Copy to Clipboard</button>
+
+	<pre id="output"></pre>
+
+	<script>
+		function getChecked(className) {
+			return Array.from(document.querySelectorAll(`.${className}:checked`))
+				.map(cb => `- [x] ${cb.value}`)
+				.join('\n');
+		}
+
+		function generate() {
+			const summary = document.getElementById('summary').value;
+			const howToTest = document.getElementById('howToTest').value;
+			const coverage = document.getElementById('coverage').value;
+			const screenshots = document.getElementById('screenshots').value;
+			const breaking = document.getElementById('breaking').value;
+			const notes = document.getElementById('notes').value;
+
+			const output = `
+## Summary
+
+${summary || '<!-- Briefly explain what this PR does and why -->'}
+
+## Changes for
+
+${getChecked('changes-for')}
+
+## Checklist
+
+${getChecked('checklist')}
+
+## Type of Change
+
+${getChecked('type')}
+
+## How to Test
+
+${howToTest || '1.\n2.\n3.'}
+
+## Test Coverage
+
+${coverage || '<!-- Paste the Test coverage here -->'}
+
+## Screenshots / Recordings (if applicable)
+
+${screenshots || '<!-- Add screenshots or videos -->'}
+
+## Breaking Changes
+
+${breaking || '<!-- Describe any breaking changes and migration steps -->'}
+
+## Additional Notes
+
+${notes || '<!-- Anything else reviewers should know -->'}
+      `.trim();
+
+			document.getElementById('output').textContent = output;
+		}
+
+		function copy() {
+			const text = document.getElementById('output').textContent;
+			navigator.clipboard.writeText(text);
+			alert('PR template copied to clipboard!');
+		}
+	</script>
+
+</body>
+
+</html>
